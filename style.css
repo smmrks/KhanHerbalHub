@@ -1,56 +1,40 @@
-*{
-margin:0;
+*{margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:'Poppins',sans-serif;
-}
+font-family:'Poppins',sans-serif;}
 
-body{
-background:#f7f7f2;
-color:#222;
-}
+body{background:#f7f7f2;
+color:#222;}
 
-header{
-display:flex;
+header{display:flex;
 justify-content:space-between;
 align-items:center;
-padding:20px 8%;
-background:#0F3D2E;
-}
+padding:40px 8%;
+background:#0F3D2E;}
 
-.logo{
-display:flex;
+.logo{display:flex;
 align-items:center;
-gap:12px;
-}
+gap:12px;}
 
-.logo img{
-width:55px;
+.logo img{width:55px;
 height:55px;
-border-radius:50%;
-}
+border-radius:50%;}
 
-.logo h2{
-color:#fff;
-font-size:22px;
-}
+.logo h2{color:#fff;
+font-size:22px;}
 
-.btn{
-background:#D4AF37;
+.btn{background:#D4AF37;
 color:#111;
 padding:12px 24px;
 border-radius:30px;
 text-decoration:none;
-font-weight:600;
-}
+font-weight:600;}
 
-.hero{
-display:flex;
+.hero{display:flex;
 align-items:center;
 justify-content:space-between;
 padding:60px 8%;
-gap:40px;
-}
+gap:40px;}
 
 .left{
 flex:1;
