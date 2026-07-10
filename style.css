@@ -268,4 +268,110 @@ box-shadow:0 8px 25px rgba(0,0,0,.08);
 
 margin:15px 0;
 
+}.reviews{
+
+padding:70px 8%;
+
+background:#fff;
+
+}
+
+.reviews h2{
+
+text-align:center;
+
+margin-bottom:40px;
+
+color:#0F3D2E;
+
+}
+
+.reviewGrid{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+
+gap:20px;
+
+}
+
+.review{
+
+background:#fff;
+
+padding:25px;
+
+border-radius:15px;
+
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.review h4{
+
+margin:10px 0;
+
+}
+
+.faq{
+
+padding:70px 8%;
+
+background:#f7f7f2;
+
+}
+
+.faq h2{
+
+text-align:center;
+
+margin-bottom:35px;
+
+}
+
+.faqItem{
+
+background:#fff;
+
+padding:20px;
+
+border-radius:12px;
+
+margin-bottom:20px;
+
+box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+}
+
+.order{
+
+padding:80px 8%;
+
+text-align:center;
+
+background:#0F3D2E;
+
+color:#fff;
+
+}
+
+.orderBtn{
+
+display:inline-block;
+
+margin-top:20px;
+
+padding:16px 40px;
+
+background:#FFD54F;
+
+color:#000;
+
+font-weight:bold;
+
+border-radius:40px;
+
+text-decoration:none;
+
 }
