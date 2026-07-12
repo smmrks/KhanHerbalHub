@@ -522,3 +522,38 @@ img{
     max-width:100%;
     height:auto;
 }
+/* ===== Top Bar ===== */
+
+.top-bar{
+    width:100%;
+    background:#0b3d2e;
+    color:#fff;
+    padding:10px 15px;
+    text-align:center;
+    font-size:14px;
+    font-weight:600;
+    letter-spacing:.3px;
+}
+
+.top-bar-content{
+    max-width:1200px;
+    margin:auto;
+}
+
+.top-bar span{
+    color:#d4af37;
+    margin:0 12px;
+}
+
+@media(max-width:768px){
+
+.top-bar{
+    font-size:12px;
+    line-height:1.8;
+}
+
+.top-bar span{
+    display:none;
+}
+
+}
