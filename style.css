@@ -556,4 +556,33 @@ img{
     display:none;
 }
 
+}/* ===== Trust Box ===== */
+
+.trust-box{
+display:flex;
+gap:15px;
+margin-top:25px;
+flex-wrap:wrap;
+}
+
+.trust-item{
+background:#ffffff;
+padding:15px;
+border-radius:15px;
+flex:1;
+min-width:120px;
+text-align:center;
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+transition:.3s;
+}
+
+.trust-item:hover{
+transform:translateY(-5px);
+}
+
+.trust-item p{
+margin-top:8px;
+font-size:14px;
+font-weight:600;
+color:#333;
 }
