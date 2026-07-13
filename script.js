@@ -107,7 +107,7 @@
 
   /* ---------------- Order form: quantity, coupon, summary, WhatsApp submit ---------------- */
   var UNIT_PRICE = 1590;
-  var WHATSAPP_NUMBER = '8801700000000'; // TODO: replace with real business WhatsApp number
+  var WHATSAPP_NUMBER = '8801608780378';
 
   var qtyInput = document.getElementById('fqty');
   var qtyMinus = document.getElementById('qtyMinus');
@@ -145,11 +145,13 @@
 
     if (sumQty) sumQty.textContent = bnDigits(qty);
     if (sumSubtotal) sumSubtotal.textContent = formatTaka(subtotal);
-    if (discount > 0) {
-      discountRow.hidden = false;
-      sumDiscount.textContent = '−' + formatTaka(discount);
-    } else {
-      discountRow.hidden = true;
+    if (discountRow && sumDiscount) {
+      if (discount > 0) {
+        discountRow.hidden = false;
+        sumDiscount.textContent = '−' + formatTaka(discount);
+      } else {
+        discountRow.hidden = true;
+      }
     }
     if (sumTotal) sumTotal.textContent = formatTaka(total);
     return { qty: qty, subtotal: subtotal, discount: discount, total: total };
@@ -166,26 +168,37 @@
       qtyInput.value = v;
       updateSummary();
     });
+    qtyInput.addEventListener('input', function () {
+      var v = parseInt(qtyInput.value, 10) || 1;
+      qtyInput.value = Math.min(20, Math.max(1, v));
+      updateSummary();
+    });
   }
 
   if (applyCouponBtn) {
     applyCouponBtn.addEventListener('click', function () {
-      var code = (couponInput.value || '').trim().toUpperCase();
+      var code = ((couponInput && couponInput.value) || '').trim().toUpperCase();
       if (!code) {
-        couponMsg.textContent = 'একটি কুপন কোড লিখুন।';
-        couponMsg.style.color = 'var(--muted)';
+        if (couponMsg) {
+          couponMsg.textContent = 'একটি কুপন কোড লিখুন।';
+          couponMsg.style.color = 'var(--muted)';
+        }
         return;
       }
       if (VALID_COUPONS[code]) {
         appliedDiscountPercent = VALID_COUPONS[code];
         appliedCouponCode = code;
-        couponMsg.textContent = '✓ কুপন প্রয়োগ হয়েছে — ' + bnDigits(VALID_COUPONS[code]) + '% ছাড় পেয়েছেন।';
-        couponMsg.style.color = 'var(--success)';
+        if (couponMsg) {
+          couponMsg.textContent = '✓ কুপন প্রয়োগ হয়েছে — ' + bnDigits(VALID_COUPONS[code]) + '% ছাড় পেয়েছেন।';
+          couponMsg.style.color = 'var(--success)';
+        }
       } else {
         appliedDiscountPercent = 0;
         appliedCouponCode = '';
-        couponMsg.textContent = 'কুপন কোডটি সঠিক নয়।';
-        couponMsg.style.color = '#e28880';
+        if (couponMsg) {
+          couponMsg.textContent = 'কুপন কোডটি সঠিক নয়।';
+          couponMsg.style.color = '#e28880';
+        }
       }
       updateSummary();
     });
@@ -237,7 +250,8 @@
       var address = fields.faddress.el.value.trim();
       var paymentSelect = document.getElementById('fpayment');
       var paymentLabelMap = { cod: 'ক্যাশ অন ডেলিভারি', bkash: 'bKash', rocket: 'Rocket', bank: 'ব্যাংক ট্রান্সফার' };
-      var paymentLabel = paymentLabelMap[paymentSelect.value] || paymentSelect.value;
+      var paymentValue = paymentSelect ? paymentSelect.value : 'cod';
+      var paymentLabel = paymentLabelMap[paymentValue] || paymentValue;
 
       var lines = [
         'আসসালামু আলাইকুম, আমি একটি অর্ডার দিতে চাই।',
