@@ -107,7 +107,7 @@
 
   /* ---------------- Order form: quantity, coupon, summary, WhatsApp submit ---------------- */
   var UNIT_PRICE = 1590;
-  var WHATSAPP_NUMBER = '8801608780378';
+  var BKASH_PAYMENT_LINK = 'https://shop.bkash.com/khan-shop01608780378/pay/bdt1590/fW59BO';
 
   var qtyInput = document.getElementById('fqty');
   var qtyMinus = document.getElementById('qtyMinus');
@@ -206,8 +206,9 @@
 
   updateSummary();
 
-  /* ---------------- Form validation + WhatsApp order submission ---------------- */
+  /* ---------------- Form validation + checkout payment redirect ---------------- */
   var orderForm = document.getElementById('orderForm');
+  var paidConfirmBtn = null;
   var fields = {
     fname: { el: document.getElementById('fname'), errEl: document.getElementById('err-fname'), validate: function (v) { return v.trim().length >= 2 ? '' : 'পূর্ণ নাম লিখুন।'; } },
     fphone: { el: document.getElementById('fphone'), errEl: document.getElementById('err-fphone'), validate: function (v) { return /^01[3-9][0-9]{8}$/.test(v.trim()) ? '' : 'সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন (যেমন: 017XXXXXXXX)।'; } },
@@ -224,6 +225,18 @@
   });
 
   if (orderForm) {
+    var submitBtn = orderForm.querySelector('button[type="submit"]');
+    if (submitBtn) {
+      paidConfirmBtn = document.createElement('button');
+      paidConfirmBtn.type = 'button';
+      paidConfirmBtn.className = 'btn btn-outline btn-block';
+      paidConfirmBtn.textContent = 'I Have Paid';
+      paidConfirmBtn.addEventListener('click', function () {
+        alert('Thank you. We have received your payment confirmation. Our team will verify your payment and contact you soon.');
+      });
+      submitBtn.insertAdjacentElement('afterend', paidConfirmBtn);
+    }
+
     orderForm.addEventListener('submit', function (e) {
       e.preventDefault();
       var valid = true;
@@ -244,31 +257,8 @@
         return;
       }
 
-      var summary = updateSummary();
-      var name = fields.fname.el.value.trim();
-      var phone = fields.fphone.el.value.trim();
-      var address = fields.faddress.el.value.trim();
-      var paymentSelect = document.getElementById('fpayment');
-      var paymentLabelMap = { cod: 'ক্যাশ অন ডেলিভারি', bkash: 'bKash', rocket: 'Rocket', bank: 'ব্যাংক ট্রান্সফার' };
-      var paymentValue = paymentSelect ? paymentSelect.value : 'cod';
-      var paymentLabel = paymentLabelMap[paymentValue] || paymentValue;
-
-      var lines = [
-        'আসসালামু আলাইকুম, আমি একটি অর্ডার দিতে চাই।',
-        '',
-        'পণ্য: Natural Power Halwa (৫০০ গ্রাম)',
-        'পরিমাণ: ' + summary.qty,
-        'নাম: ' + name,
-        'মোবাইল: ' + phone,
-        'ঠিকানা: ' + address,
-        'পেমেন্ট মেথড: ' + paymentLabel
-      ];
-      if (appliedCouponCode) lines.push('কুপন: ' + appliedCouponCode + ' (' + appliedDiscountPercent + '%)');
-      lines.push('সর্বমোট: ৳' + summary.total.toLocaleString('en-US'));
-
-      var message = encodeURIComponent(lines.join('\n'));
-      var url = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + message;
-      window.open(url, '_blank', 'noopener');
+      alert('You will now be redirected to the secure bKash payment page.\n\nAfter successful payment, please return to this website and click the "I Have Paid" button.');
+      window.location.href = BKASH_PAYMENT_LINK;
     });
   }
 
