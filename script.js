@@ -108,6 +108,7 @@
   /* ---------------- Order form: quantity, coupon, summary, WhatsApp submit ---------------- */
   var UNIT_PRICE = 1590;
   var BKASH_PAYMENT_LINK = 'https://shop.bkash.com/khan-shop01608780378/pay/bdt1590/fW59BO';
+  var ORDER_WHATSAPP_NUMBER = '8801608780378';
 
   var qtyInput = document.getElementById('fqty');
   var qtyMinus = document.getElementById('qtyMinus');
@@ -209,6 +210,7 @@
   /* ---------------- Form validation + checkout payment redirect ---------------- */
   var orderForm = document.getElementById('orderForm');
   var paidConfirmBtn = null;
+  var paymentSelect = document.getElementById('fpayment');
   var fields = {
     fname: { el: document.getElementById('fname'), errEl: document.getElementById('err-fname'), validate: function (v) { return v.trim().length >= 2 ? '' : 'পূর্ণ নাম লিখুন।'; } },
     fphone: { el: document.getElementById('fphone'), errEl: document.getElementById('err-fphone'), validate: function (v) { return /^01[3-9][0-9]{8}$/.test(v.trim()) ? '' : 'সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন (যেমন: 017XXXXXXXX)।'; } },
@@ -257,8 +259,51 @@
         return;
       }
 
-      alert('You will now be redirected to the secure bKash payment page.\n\nAfter successful payment, please return to this website and click the "I Have Paid" button.');
-      window.location.href = BKASH_PAYMENT_LINK;
+      var summary = updateSummary();
+      var paymentMethod = (paymentSelect && paymentSelect.value) || 'cod';
+      var paymentLabel = 'ক্যাশ অন ডেলিভারি';
+      if (paymentMethod === 'bkash') paymentLabel = 'bKash';
+      if (paymentMethod === 'rocket') paymentLabel = 'Rocket';
+      if (paymentMethod === 'bank') paymentLabel = 'ব্যাংক ট্রান্সফার';
+
+      var orderLines = [
+        'আসসালামু আলাইকুম, আমি Natural Power Halwa অর্ডার করতে চাই।',
+        '',
+        '🛒 *অর্ডার তথ্য*',
+        '• নাম: ' + fields.fname.el.value.trim(),
+        '• ফোন: ' + fields.fphone.el.value.trim(),
+        '• ঠিকানা: ' + fields.faddress.el.value.trim(),
+        '• পেমেন্ট মেথড: ' + paymentLabel,
+        '• পরিমাণ: ' + summary.qty,
+        '• সাবটোটাল: ৳' + summary.subtotal
+      ];
+
+      if (summary.discount > 0) {
+        orderLines.push('• ছাড়: ৳' + summary.discount + (appliedCouponCode ? ' (কুপন: ' + appliedCouponCode + ')' : ''));
+      }
+
+      orderLines.push('• মোট: ৳' + summary.total);
+
+      var whatsappUrl = 'https://wa.me/' + ORDER_WHATSAPP_NUMBER + '?text=' + encodeURIComponent(orderLines.join('\n'));
+      window.open(whatsappUrl, '_blank', 'noopener');
+
+      if (paymentMethod === 'bkash') {
+        alert('আপনাকে bKash পেমেন্ট পেইজে নেওয়া হচ্ছে।\n\nপেমেন্ট সম্পন্ন হলে এই ওয়েবসাইটে ফিরে এসে "I Have Paid" বাটনে ক্লিক করুন।');
+        window.location.href = BKASH_PAYMENT_LINK;
+        return;
+      }
+
+      if (paymentMethod === 'rocket') {
+        alert('Rocket পেমেন্ট নির্দেশনা:\n\nRocket নাম্বার: 01608780378\nপরিমাণ: ৳' + summary.total + '\n\nপেমেন্টের পর "I Have Paid" বাটনে ক্লিক করুন।');
+        return;
+      }
+
+      if (paymentMethod === 'bank') {
+        alert('ব্যাংক ট্রান্সফার তথ্য:\n\nব্যাংক: Dutch-Bangla Bank\nঅ্যাকাউন্ট নাম: Khan Herbal Hub\nঅ্যাকাউন্ট নম্বর: 01608780378\nপরিমাণ: ৳' + summary.total + '\n\nট্রান্সফার শেষে "I Have Paid" বাটনে ক্লিক করুন।');
+        return;
+      }
+
+      alert('আপনার অর্ডার WhatsApp-এ পাঠানো হয়েছে। ক্যাশ অন ডেলিভারিতে কোনো অগ্রিম পেমেন্ট প্রয়োজন নেই।');
     });
   }
 
