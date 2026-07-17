@@ -253,7 +253,8 @@
       '<p><span>পেমেন্ট মেথড</span><span>' + data.paymentLabel + '</span></p>' +
       '<p><span>মোট</span><span>৳' + data.total + '</span></p>';
   }
-function sendOrderNotification(orderId, data) {
+
+  function sendOrderNotification(orderId, data) {
     var payload = {
       access_key: '0d2c1a03-551f-40fb-863c-67919a485e20',
       subject: 'নতুন অর্ডার - ' + orderId,
@@ -273,7 +274,8 @@ function sendOrderNotification(orderId, data) {
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(payload)
     }).catch(function (err) { console.error('Order notification failed:', err); });
-}
+  }
+
   function makePaidButton(onConfirmed) {
     var btn = document.createElement('button');
     btn.type = 'button';
@@ -328,11 +330,7 @@ function sendOrderNotification(orderId, data) {
       confirmOrderId.textContent = 'অর্ডার আইডি: ' + orderId;
       renderConfirmDetails(orderData);
       confirmPaymentActions.innerHTML = '';
-       confirmTitle.textContent = 'অর্ডার কনফার্ম হয়েছে!';
-      confirmPaymentActions.innerHTML = '';        ← এইটা না (এটা makePaidButton ফাংশনের ভেতরে)
-      if (typeof onConfirmed === 'function') onConfirmed();
-      renderConfirmDetails(orderData);
-      confirmPaymentActions.innerHTML = '';        ← এইটা — এর ঠিক পরে নতুন লাইন বসান
+      sendOrderNotification(orderId, orderData);
 
       if (paymentMethod === 'cod') {
         confirmTitle.textContent = 'অর্ডার কনফার্ম হয়েছে!';
