@@ -391,3 +391,60 @@
   }
 
 })();
+const API_URL = "https://script.google.com/macros/s/AKfycby264r7RkiEhi80-CP_ytR3cetY_FCNVdpyqu1RuH8Xx8V1h6zV6bZFZOAXRUQSJB8/exec";
+
+const paymentBtn = document.getElementById("paymentConfirmBtn");
+const paymentBox = document.getElementById("paymentBox");
+const submitPayment = document.getElementById("submitPayment");
+const paymentInput = document.getElementById("paymentInput");
+const paymentMsg = document.getElementById("paymentMsg");
+
+paymentBtn.addEventListener("click", () => {
+    paymentBox.style.display = "block";
+});
+
+submitPayment.addEventListener("click", async () => {
+
+    if (paymentInput.value.trim() === "") {
+        paymentMsg.innerHTML = "Transaction ID লিখুন";
+        paymentMsg.style.color = "red";
+        return;
+    }
+
+    submitPayment.disabled = true;
+    submitPayment.innerHTML = "Submitting...";
+
+    try {
+
+        const res = await fetch(API_URL,{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({
+                payment:paymentInput.value
+            })
+        });
+
+        const data = await res.json();
+
+        if(data.status==="success"){
+            paymentMsg.innerHTML="✅ Payment Confirmation গ্রহণ করা হয়েছে";
+            paymentMsg.style.color="green";
+            paymentInput.value="";
+        }else{
+            paymentMsg.innerHTML="❌ Failed";
+            paymentMsg.style.color="red";
+        }
+
+    } catch(err){
+
+        paymentMsg.innerHTML="Server Error";
+        paymentMsg.style.color="red";
+
+    }
+
+    submitPayment.disabled=false;
+    submitPayment.innerHTML="Payment Confirm";
+
+});
