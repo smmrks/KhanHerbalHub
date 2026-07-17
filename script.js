@@ -253,7 +253,27 @@
       '<p><span>পেমেন্ট মেথড</span><span>' + data.paymentLabel + '</span></p>' +
       '<p><span>মোট</span><span>৳' + data.total + '</span></p>';
   }
-
+function sendOrderNotification(orderId, data) {
+    var payload = {
+      access_key: '0d2c1a03-551f-40fb-863c-67919a485e20',
+      subject: 'নতুন অর্ডার - ' + orderId,
+      from_name: 'Khan Herbal Hub Website',
+      email: 'orders@khanherbalhub.tech',
+      message:
+        'অর্ডার আইডি: ' + orderId + '\n' +
+        'নাম: ' + data.name + '\n' +
+        'ফোন: ' + data.phone + '\n' +
+        'ঠিকানা: ' + data.address + '\n' +
+        'পরিমাণ: ' + data.qty + '\n' +
+        'পেমেন্ট মেথড: ' + data.paymentLabel + '\n' +
+        'মোট: ৳' + data.total
+    };
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
+    }).catch(function (err) { console.error('Order notification failed:', err); });
+}
   function makePaidButton(onConfirmed) {
     var btn = document.createElement('button');
     btn.type = 'button';
