@@ -500,4 +500,26 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   .btn{ padding:14px 22px; }
   .ingredient-grid{ grid-template-columns:1fr; }
   .secret-card, .guarantee-card{ padding:40px 20px; }
+}/* ---------- Order Confirmation Modal ---------- */
+.order-confirm-overlay{
+  position:fixed; inset:0; z-index:999; display:flex; align-items:center; justify-content:center;
+  background:rgba(7,9,10,0.82); backdrop-filter:blur(6px); padding:20px;
 }
+.order-confirm-card{
+  width:100%; max-width:420px; background:linear-gradient(160deg, rgba(18,53,36,0.6), rgba(7,9,10,0.95));
+  border:1px solid var(--gold-dark); border-radius:var(--radius-lg); padding:36px 28px; text-align:center;
+  box-shadow:var(--shadow-deep); max-height:90vh; overflow-y:auto;
+}
+.confirm-icon{
+  width:60px; height:60px; margin:0 auto 18px; border-radius:50%; background:var(--success);
+  color:#fff; font-size:1.8rem; font-weight:700; display:flex; align-items:center; justify-content:center;
+}
+.order-confirm-card h3{ color:var(--cream); font-size:1.3rem; margin-bottom:8px; }
+.confirm-order-id{ color:var(--gold-light); font-family:var(--font-ui); font-size:.85rem; margin-bottom:18px; }
+.confirm-details{
+  text-align:right; background:rgba(255,255,255,0.03); border-radius:var(--radius-sm);
+  padding:14px 16px; margin-bottom:18px; font-size:.88rem; color:var(--cream-dim);
+}
+.confirm-details p{ display:flex; justify-content:space-between; gap:10px; padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.06); }
+.confirm-details p:last-child{ border-bottom:none; font-weight:700; color:var(--gold-light); }
+#confirmPaymentActions{ display:flex; flex-direction:column; gap:10px; margin-bottom:14px; }
