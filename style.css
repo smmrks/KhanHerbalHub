@@ -505,6 +505,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   position:fixed; inset:0; z-index:999; display:flex; align-items:center; justify-content:center;
   background:rgba(7,9,10,0.82); backdrop-filter:blur(6px); padding:20px;
 }
+.order-confirm-overlay[hidden]{ display:none; }
 .order-confirm-card{
   width:100%; max-width:420px; background:linear-gradient(160deg, rgba(18,53,36,0.6), rgba(7,9,10,0.95));
   border:1px solid var(--gold-dark); border-radius:var(--radius-lg); padding:36px 28px; text-align:center;
