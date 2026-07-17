@@ -39,7 +39,6 @@
 
   /* ---------------- Scroll reveal via IntersectionObserver ---------------- */
   var revealEls = document.querySelectorAll('.reveal-up, .reveal-scale');
-  // stagger index per parent group for grid children
   var groupSelectors = ['.ingredient-grid', '.benefit-grid', '.review-grid', '.trust-grid', '.accordion'];
   groupSelectors.forEach(function (sel) {
     var group = document.querySelector(sel);
@@ -90,7 +89,6 @@
     panel.style.maxHeight = '0px';
     trigger.addEventListener('click', function () {
       var isOpen = trigger.getAttribute('aria-expanded') === 'true';
-      // close all others
       accItems.forEach(function (other) {
         if (other === item) return;
         var otherTrigger = other.querySelector('.acc-trigger');
@@ -105,10 +103,9 @@
     });
   });
 
-  /* ---------------- Order form: quantity, coupon, summary, WhatsApp submit ---------------- */
+  /* ---------------- Order form: quantity, coupon, summary ---------------- */
   var UNIT_PRICE = 1590;
   var BKASH_PAYMENT_LINK = 'https://shop.bkash.com/khan-shop01608780378/pay/bdt1590/fW59BO';
-  var ORDER_WHATSAPP_NUMBER = '8801608780378';
 
   var qtyInput = document.getElementById('fqty');
   var qtyMinus = document.getElementById('qtyMinus');
@@ -207,9 +204,8 @@
 
   updateSummary();
 
-  /* ---------------- Form validation + checkout payment redirect ---------------- */
+  /* ---------------- Form validation ---------------- */
   var orderForm = document.getElementById('orderForm');
-  var paidConfirmBtn = null;
   var paymentSelect = document.getElementById('fpayment');
   var fields = {
     fname: { el: document.getElementById('fname'), errEl: document.getElementById('err-fname'), validate: function (v) { return v.trim().length >= 2 ? '' : 'পূর্ণ নাম লিখুন।'; } },
@@ -226,19 +222,52 @@
     });
   });
 
-  if (orderForm) {
-    var submitBtn = orderForm.querySelector('button[type="submit"]');
-    if (submitBtn) {
-      paidConfirmBtn = document.createElement('button');
-      paidConfirmBtn.type = 'button';
-      paidConfirmBtn.className = 'btn btn-outline btn-block';
-      paidConfirmBtn.textContent = 'I Have Paid';
-      paidConfirmBtn.addEventListener('click', function () {
-        alert('Thank you. We have received your payment confirmation. Our team will verify your payment and contact you soon.');
-      });
-      submitBtn.insertAdjacentElement('afterend', paidConfirmBtn);
-    }
+  /* ---------------- On-site order confirmation modal ---------------- */
+  var confirmModal = document.getElementById('orderConfirmModal');
+  var confirmTitle = document.getElementById('confirmTitle');
+  var confirmOrderId = document.getElementById('confirmOrderId');
+  var confirmDetails = document.getElementById('confirmDetails');
+  var confirmPaymentActions = document.getElementById('confirmPaymentActions');
+  var closeConfirmModal = document.getElementById('closeConfirmModal');
 
+  function openConfirmModal() { if (confirmModal) confirmModal.hidden = false; }
+  function hideConfirmModal() { if (confirmModal) confirmModal.hidden = true; }
+
+  if (closeConfirmModal) {
+    closeConfirmModal.addEventListener('click', function () {
+      hideConfirmModal();
+      if (orderForm) orderForm.reset();
+      appliedDiscountPercent = 0;
+      appliedCouponCode = '';
+      if (couponMsg) couponMsg.textContent = '';
+      updateSummary();
+    });
+  }
+
+  function renderConfirmDetails(data) {
+    confirmDetails.innerHTML =
+      '<p><span>নাম</span><span>' + data.name + '</span></p>' +
+      '<p><span>ফোন</span><span>' + data.phone + '</span></p>' +
+      '<p><span>ঠিকানা</span><span>' + data.address + '</span></p>' +
+      '<p><span>পরিমাণ</span><span>' + data.qty + '</span></p>' +
+      '<p><span>পেমেন্ট মেথড</span><span>' + data.paymentLabel + '</span></p>' +
+      '<p><span>মোট</span><span>৳' + data.total + '</span></p>';
+  }
+
+  function makePaidButton(onConfirmed) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn btn-whatsapp btn-block';
+    btn.textContent = 'পেমেন্ট সম্পন্ন করেছি';
+    btn.addEventListener('click', function () {
+      confirmTitle.textContent = 'অর্ডার কনফার্ম হয়েছে!';
+      confirmPaymentActions.innerHTML = '';
+      if (typeof onConfirmed === 'function') onConfirmed();
+    });
+    return btn;
+  }
+
+  if (orderForm) {
     orderForm.addEventListener('submit', function (e) {
       e.preventDefault();
       var valid = true;
@@ -266,44 +295,52 @@
       if (paymentMethod === 'rocket') paymentLabel = 'Rocket';
       if (paymentMethod === 'bank') paymentLabel = 'ব্যাংক ট্রান্সফার';
 
-      var orderLines = [
-        'আসসালামু আলাইকুম, আমি Natural Power Halwa অর্ডার করতে চাই।',
-        '',
-        '🛒 *অর্ডার তথ্য*',
-        '• নাম: ' + fields.fname.el.value.trim(),
-        '• ফোন: ' + fields.fphone.el.value.trim(),
-        '• ঠিকানা: ' + fields.faddress.el.value.trim(),
-        '• পেমেন্ট মেথড: ' + paymentLabel,
-        '• পরিমাণ: ' + summary.qty,
-        '• সাবটোটাল: ৳' + summary.subtotal
-      ];
+      var orderId = 'KHH-' + Date.now().toString().slice(-6);
+      var orderData = {
+        name: fields.fname.el.value.trim(),
+        phone: fields.fphone.el.value.trim(),
+        address: fields.faddress.el.value.trim(),
+        qty: summary.qty,
+        total: summary.total,
+        paymentLabel: paymentLabel
+      };
 
-      if (summary.discount > 0) {
-        orderLines.push('• ছাড়: ৳' + summary.discount + (appliedCouponCode ? ' (কুপন: ' + appliedCouponCode + ')' : ''));
+      confirmOrderId.textContent = 'অর্ডার আইডি: ' + orderId;
+      renderConfirmDetails(orderData);
+      confirmPaymentActions.innerHTML = '';
+
+      if (paymentMethod === 'cod') {
+        confirmTitle.textContent = 'অর্ডার কনফার্ম হয়েছে!';
+
+      } else if (paymentMethod === 'bkash') {
+        confirmTitle.textContent = 'অর্ডার সংরক্ষিত — পেমেন্ট বাকি';
+        var bkashBtn = document.createElement('a');
+        bkashBtn.href = BKASH_PAYMENT_LINK;
+        bkashBtn.target = '_blank';
+        bkashBtn.rel = 'noopener';
+        bkashBtn.className = 'btn btn-primary btn-block';
+        bkashBtn.textContent = 'bKash-এ পেমেন্ট করুন';
+        confirmPaymentActions.appendChild(bkashBtn);
+        confirmPaymentActions.appendChild(makePaidButton());
+
+      } else if (paymentMethod === 'rocket') {
+        confirmTitle.textContent = 'অর্ডার সংরক্ষিত — পেমেন্ট বাকি';
+        var rocketNote = document.createElement('p');
+        rocketNote.style.cssText = 'color:var(--cream-dim);font-size:.85rem;margin-bottom:10px;';
+        rocketNote.textContent = 'Rocket নাম্বার: 01608780378 — পরিমাণ: ৳' + summary.total;
+        confirmPaymentActions.appendChild(rocketNote);
+        confirmPaymentActions.appendChild(makePaidButton());
+
+      } else if (paymentMethod === 'bank') {
+        confirmTitle.textContent = 'অর্ডার সংরক্ষিত — পেমেন্ট বাকি';
+        var bankNote = document.createElement('p');
+        bankNote.style.cssText = 'color:var(--cream-dim);font-size:.85rem;margin-bottom:10px;';
+        bankNote.textContent = 'Dutch-Bangla Bank, A/C: Khan Herbal Hub, 01608780378 — পরিমাণ: ৳' + summary.total;
+        confirmPaymentActions.appendChild(bankNote);
+        confirmPaymentActions.appendChild(makePaidButton());
       }
 
-      orderLines.push('• মোট: ৳' + summary.total);
-
-      var whatsappUrl = 'https://wa.me/' + ORDER_WHATSAPP_NUMBER + '?text=' + encodeURIComponent(orderLines.join('\n'));
-      window.open(whatsappUrl, '_blank', 'noopener');
-
-      if (paymentMethod === 'bkash') {
-        alert('আপনাকে bKash পেমেন্ট পেইজে নেওয়া হচ্ছে।\n\nপেমেন্ট সম্পন্ন হলে এই ওয়েবসাইটে ফিরে এসে "I Have Paid" বাটনে ক্লিক করুন।');
-        window.location.href = BKASH_PAYMENT_LINK;
-        return;
-      }
-
-      if (paymentMethod === 'rocket') {
-        alert('Rocket পেমেন্ট নির্দেশনা:\n\nRocket নাম্বার: 01608780378\nপরিমাণ: ৳' + summary.total + '\n\nপেমেন্টের পর "I Have Paid" বাটনে ক্লিক করুন।');
-        return;
-      }
-
-      if (paymentMethod === 'bank') {
-        alert('ব্যাংক ট্রান্সফার তথ্য:\n\nব্যাংক: Dutch-Bangla Bank\nঅ্যাকাউন্ট নাম: Khan Herbal Hub\nঅ্যাকাউন্ট নম্বর: 01608780378\nপরিমাণ: ৳' + summary.total + '\n\nট্রান্সফার শেষে "I Have Paid" বাটনে ক্লিক করুন।');
-        return;
-      }
-
-      alert('আপনার অর্ডার WhatsApp-এ পাঠানো হয়েছে। ক্যাশ অন ডেলিভারিতে কোনো অগ্রিম পেমেন্ট প্রয়োজন নেই।');
+      openConfirmModal();
     });
   }
 
@@ -331,4 +368,3 @@
   }
 
 })();
-                             
