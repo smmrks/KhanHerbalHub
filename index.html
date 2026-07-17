@@ -536,7 +536,34 @@
     <h3 id="confirmTitle">অর্ডার কনফার্ম হয়েছে!</h3>
     <p class="confirm-order-id" id="confirmOrderId"></p>
     <div class="confirm-details" id="confirmDetails"></div>
-    <div id="confirmPaymentActions"></div>
+    <div id="confirmPaymentActions">
+
+  <button id="paymentConfirmBtn" class="btn btn-primary btn-block">
+    আমি পেমেন্ট করেছি
+  </button>
+
+  <div id="paymentBox" style="display:none;margin-top:15px;">
+
+    <input
+      id="paymentInput"
+      type="text"
+      placeholder="Transaction ID অথবা পেমেন্ট নম্বর"
+      class="field-input">
+
+    <button
+      id="submitPayment"
+      class="btn btn-primary btn-block"
+      style="margin-top:10px;">
+
+      Payment Confirm
+
+    </button>
+
+    <p id="paymentMsg"></p>
+
+  </div>
+
+    </div>
     <button id="closeConfirmModal" class="btn btn-outline btn-block">বন্ধ করুন</button>
   </div>
 </div>
