@@ -529,7 +529,17 @@
     <p>© <span id="year"></span> Khan Herbal Hub. All rights reserved.</p>
   </div>
 </footer>
-
+<!-- ORDER CONFIRMATION MODAL -->
+<div id="orderConfirmModal" class="order-confirm-overlay" hidden>
+  <div class="order-confirm-card">
+    <div class="confirm-icon">✓</div>
+    <h3 id="confirmTitle">অর্ডার কনফার্ম হয়েছে!</h3>
+    <p class="confirm-order-id" id="confirmOrderId"></p>
+    <div class="confirm-details" id="confirmDetails"></div>
+    <div id="confirmPaymentActions"></div>
+    <button id="closeConfirmModal" class="btn btn-outline btn-block">বন্ধ করুন</button>
+  </div>
+</div>
 <script src="script.js"></script>
 </body>
 </html>
