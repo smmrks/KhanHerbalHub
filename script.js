@@ -328,6 +328,11 @@ function sendOrderNotification(orderId, data) {
       confirmOrderId.textContent = 'অর্ডার আইডি: ' + orderId;
       renderConfirmDetails(orderData);
       confirmPaymentActions.innerHTML = '';
+       confirmTitle.textContent = 'অর্ডার কনফার্ম হয়েছে!';
+      confirmPaymentActions.innerHTML = '';        ← এইটা না (এটা makePaidButton ফাংশনের ভেতরে)
+      if (typeof onConfirmed === 'function') onConfirmed();
+      renderConfirmDetails(orderData);
+      confirmPaymentActions.innerHTML = '';        ← এইটা — এর ঠিক পরে নতুন লাইন বসান
 
       if (paymentMethod === 'cod') {
         confirmTitle.textContent = 'অর্ডার কনফার্ম হয়েছে!';
